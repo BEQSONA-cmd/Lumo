@@ -93,7 +93,7 @@ int main()
 ```cpp
 #include "Lumo/Lumo.hpp"
 
-void chat(std::shared_ptr<WebSocket> ws)
+void chat(WebSocket ws)
 {
     while (ws->isConnected())
     {
