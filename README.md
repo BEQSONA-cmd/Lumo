@@ -1,4 +1,4 @@
-# 🚀 Lumo
+# Lumo
 
 A lightweight, multithreaded HTTP & WebSocket engine built in modern C++.
 
@@ -10,7 +10,7 @@ Just raw TCP power.
 
 ---
 
-## ⚡ Why Lumo?
+## Why Lumo?
 
 - 🔥 Multithreaded per-connection model
 - 🧵 No request queue bottlenecks
@@ -26,9 +26,9 @@ Designed for performance-first backend systems.
 
 ## 🧠 How It Works
 
+```
 Incoming TCP Connection → accept() → std::thread (per connection) → HTTP/WebSocket Manager → Route Handler
-
----
+```
 
 ## 🧵 Multithreading Model
 
