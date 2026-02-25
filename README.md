@@ -70,7 +70,7 @@ int main()
 }
 ```
 
-## 🔌 HTTP Example
+## 🔌 Websocket Example
 
 ```cpp
 #include "Lumo/Lumo.hpp"
