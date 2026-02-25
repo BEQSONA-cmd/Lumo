@@ -27,7 +27,15 @@ Designed for performance-first backend systems.
 ## 🧠 How It Works
 
 ```
-Incoming TCP Connection → accept() → std::thread (per connection) → HTTP/WebSocket Manager → Route Handler
+Incoming TCP Connection
+          ↓
+       accept()
+          ↓
+std::thread (per connection)
+          ↓
+ HTTP/WebSocket Manager
+          ↓
+    Route Handler
 ```
 
 ## 🧵 Multithreading Model
