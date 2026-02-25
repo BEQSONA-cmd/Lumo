@@ -3,7 +3,7 @@
 
 class WebSocketManager;
 
-class WebSocket
+class WS
 {
 private:
     int socket_fd;
@@ -13,7 +13,7 @@ private:
     WebSocketManager *manager;
 
 public:
-    WebSocket(int fd, WebSocketManager *manager, const std::string &route);
+    WS(int fd, WebSocketManager *manager, const std::string &route);
     bool onMessage();
     bool onConnect() { return connected; }
     bool onClose() { return !connected; }

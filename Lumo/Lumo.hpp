@@ -26,7 +26,7 @@ public:
     {
         req_manager.registerRoute(handler, path, method);
     }
-    void registerWebSocketRoute(void (*handler)(std::shared_ptr<WebSocket>), std::string path)
+    void registerWebSocketRoute(void (*handler)(WebSocket), std::string path)
     {
         ws_manager.registerRoute(handler, path);
     }

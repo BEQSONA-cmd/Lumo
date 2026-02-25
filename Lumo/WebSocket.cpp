@@ -1,7 +1,7 @@
 #include "WebSocket.hpp"
 #include "WebSocketManager.hpp"
 
-WebSocket::WebSocket(int fd, WebSocketManager *manager, const std::string &route)
+WS::WS(int fd, WebSocketManager *manager, const std::string &route)
 {
     socket_fd = fd;
     connected = true;
@@ -10,7 +10,7 @@ WebSocket::WebSocket(int fd, WebSocketManager *manager, const std::string &route
     this->route = route;
 }
 
-bool WebSocket::onMessage()
+bool WS::onMessage()
 {
     if (!connected)
         return false;
@@ -34,7 +34,7 @@ bool WebSocket::onMessage()
     return activity > 0;
 }
 
-std::string WebSocket::getPayload()
+std::string WS::getPayload()
 {
     unsigned char buffer[4096];
     int bytes = recv(socket_fd, buffer, sizeof(buffer), 0);
@@ -71,7 +71,7 @@ std::string WebSocket::getPayload()
     return message;
 }
 
-void WebSocket::sendPayload(const std::string &message)
+void WS::sendPayload(const std::string &message)
 {
     if (!connected)
         return;
@@ -108,7 +108,7 @@ void WebSocket::sendPayload(const std::string &message)
     }
 }
 
-void WebSocket::broadcast(const std::string &message, const std::string &senderId)
+void WS::broadcast(const std::string &message, const std::string &senderId)
 {
     manager->broadcast(message, senderId, route);
 }

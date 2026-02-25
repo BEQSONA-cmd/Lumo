@@ -21,8 +21,10 @@
 
 extern std::atomic<bool> running;
 
-class WebSocket;
+class WS;
 class WebSocketManager;
 class RequestManager;
 struct Request;
 class Response;
+
+using WebSocket = std::shared_ptr<WS>;

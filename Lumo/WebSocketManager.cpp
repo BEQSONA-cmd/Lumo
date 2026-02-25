@@ -32,7 +32,7 @@ void WebSocketManager::handleWebSocket(int client_socket, Request &req)
         return;
     }
 
-    auto ws = std::make_shared<WebSocket>(client_socket, this, req.path);
+    auto ws = std::make_shared<WS>(client_socket, this, req.path);
 
     add(ws, req.path);
 
@@ -41,7 +41,7 @@ void WebSocketManager::handleWebSocket(int client_socket, Request &req)
     remove(ws->getClientId());
 }
 
-void WebSocketManager::add(std::shared_ptr<WebSocket> client, const std::string &path)
+void WebSocketManager::add(WebSocket client, const std::string &path)
 {
     std::lock_guard<std::mutex> lock(clients_mutex);
     route_clients[path].push_back(client);
@@ -69,7 +69,7 @@ void WebSocketManager::remove(const std::string &clientId)
     {
         auto &clients = route.second;
         clients.erase(std::remove_if(clients.begin(), clients.end(),
-                                     [&](std::shared_ptr<WebSocket> client)
+                                     [&](WebSocket client)
                                      { return client->getClientId() == clientId; }),
                       clients.end());
     }
