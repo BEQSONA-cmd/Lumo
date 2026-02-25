@@ -58,7 +58,17 @@ This eliminates:
 
 Every client runs independently.
 
----
+## INSTALL
+
+### build essential for c/c++
+```Bash
+sudo apt install build-essential
+```
+
+### libssl for OpenSSL
+```Bash
+sudo apt install libssl-dev
+```
 
 ## 🌐 HTTP Example
 
