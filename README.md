@@ -10,20 +10,6 @@ Just raw TCP power.
 
 ---
 
-## Why Lumo?
-
-- 🔥 Multithreaded per-connection model
-- 🧵 No request queue bottlenecks
-- ⚡ Zero runtime framework overhead
-- 💾 Minimal RAM usage
-- 📦 Tiny footprint
-- 🌐 Native HTTP + WebSocket support
-- 🔒 Thread-safe architecture
-
-Designed for performance-first backend systems.
-
----
-
 ## 🧠 How It Works
 
 ```
