@@ -18,7 +18,34 @@ public:
     std::map<std::string, std::string> headers;
 
     Response(std::string body, int statusCode, std::string statusMessage)
-        : body(body), statusCode(statusCode), statusMessage(statusMessage) {}
+    {
+        this->body = body;
+        this->statusCode = statusCode;
+        this->statusMessage = statusMessage;
+    }
+
+    Response(const char *body, int statusCode, std::string statusMessage)
+    {
+        this->body = std::string(body);
+        this->statusCode = statusCode;
+        this->statusMessage = statusMessage;
+    }
+
+    Response(const nlohmann::json &j, int statusCode, std::string statusMessage)
+    {
+        this->body = j.dump();
+        this->statusCode = statusCode;
+        this->statusMessage = statusMessage;
+    }
+
+    template <typename T>
+    Response(const T &obj, int statusCode, std::string statusMessage)
+    {
+        this->body = nlohmann::json(obj).dump();
+        this->statusCode = statusCode;
+        this->statusMessage = statusMessage;
+    }
+
     Response() : body(""), statusCode(200), statusMessage("OK") {}
     ~Response() {}
 };

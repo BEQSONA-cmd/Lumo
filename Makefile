@@ -1,6 +1,5 @@
 NAME =  server
-CXX = c++
-CPPFLAGS = -Wall -Werror -Wextra 
+CXX = c++ 
 
 SRC = $(wildcard *.cpp) \
 
@@ -12,7 +11,7 @@ all: $(NAME)
 
 $(NAME): $(OBJ)
 	make -C Lumo
-	$(CXX) $(CPPFLAGS) $(OBJ) -o $(NAME) $(LUMO_LIB) -lssl -lcrypto
+	$(CXX) $(OBJ) -o $(NAME) $(LUMO_LIB) -lssl -lcrypto
 
 clean:
 	rm -rf $(OBJ)
