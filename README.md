@@ -16,7 +16,7 @@ A lightweight, multithreaded HTTP & WebSocket engine built in modern C++.
 
 ---
 
-## 🧠 How It Works
+## How It Works
 
 ```
 Incoming TCP Connection
@@ -30,7 +30,7 @@ std::thread (per connection)
     Route Handler
 ```
 
-## 🧵 Multithreading Model
+## Multithreading Model
 
 Lumo uses a **thread-per-connection architecture**.
 
@@ -44,7 +44,7 @@ Each incoming connection:
 
 Every client runs independently.
 
-## 🌐 HTTP Example
+## HTTP Example
 
 ```cpp
 #include "Lumo/Lumo.hpp"
@@ -136,7 +136,7 @@ curl -X POST http://localhost:8080/user -H "Content-Type: application/json" -d '
 curl http://localhost:8080/user
 ```
 
-## 🔌 Websocket Example
+## Websocket Example
 
 ```cpp
 #include "Lumo/Lumo.hpp"
