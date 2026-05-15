@@ -5,6 +5,12 @@ std::mutex app_mutex;
 
 std::atomic<bool> running = true;
 
+static void error(const char *msg)
+{
+    perror(msg);
+    exit(EXIT_FAILURE);
+}
+
 void signalHandler(int signal)
 {
     if (signal == SIGINT)
@@ -30,7 +36,7 @@ Lumo::Lumo(std::string host, int port)
         server_fd = socket(AF_INET, SOCK_STREAM, 0);
         int opt = 1;
         if (server_fd <= 0)
-            exit(EXIT_FAILURE);
+            error("Failed to create socket");
 
         setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt));
 
@@ -39,10 +45,10 @@ Lumo::Lumo(std::string host, int port)
         address.sin_port = htons(port);
 
         if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0)
-            exit(EXIT_FAILURE);
+            error("Failed to bind socket");
 
         if (listen(server_fd, 10) < 0)
-            exit(EXIT_FAILURE);
+            error("Failed to listen on socket");
     }
 }
 
