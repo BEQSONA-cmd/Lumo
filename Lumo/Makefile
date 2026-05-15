@@ -4,6 +4,7 @@ CXX = c++
 CPPFLAGS = -Wall -Werror -Wextra
 
 SRC = $(wildcard *.cpp) \
+	  $(wildcard **/*.cpp)
 
 OBJ = $(SRC:.cpp=.o)
 

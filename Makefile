@@ -11,7 +11,7 @@ all: $(NAME)
 
 $(NAME): $(OBJ)
 	make -C Lumo
-	$(CXX) $(OBJ) -o $(NAME) $(LUMO_LIB) -lssl -lcrypto
+	$(CXX) $(OBJ) -o $(NAME) $(LUMO_LIB) -lssl -lcrypto -lcurl
 
 clean:
 	rm -rf $(OBJ)

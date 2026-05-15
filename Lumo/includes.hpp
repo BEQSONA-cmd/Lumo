@@ -9,12 +9,16 @@
 
 // Networking and system includes
 #include <arpa/inet.h>
+#include <curl/curl.h>
 
 // OpenSSL includes
 #include <openssl/ssl.h>
 
 // JSON library
 #include "nlohmann/json.hpp"
+
+// fetch functionnctions
+#include "fetch/fetch.hpp"
 
 // timeout for WebSocket message handling
 #define MSG_TIMEOUT 100

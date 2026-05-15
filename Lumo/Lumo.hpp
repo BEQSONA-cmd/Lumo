@@ -19,6 +19,7 @@ private:
 public:
     int server_fd;
     Lumo(std::string host, int port);
+
     void start();
     void worker(int client_socket);
 
