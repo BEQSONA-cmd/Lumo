@@ -6,6 +6,7 @@
 #include <atomic>
 #include <mutex>
 #include <csignal>
+#include <fstream>
 
 // Networking and system includes
 #include <arpa/inet.h>

@@ -1,5 +1,6 @@
 #include "Lumo/Lumo.hpp"
 
+
 class User
 {
 public:
@@ -75,4 +76,91 @@ Response FetchTestRoute2(Request req)
     // res.status will contain the HTTP status code of the response
 
     return Response(res.body, 200, "OK");
+}
+
+// dotenv function to read environment variables from a .env file
+std::string dotenv(const std::string &key)
+{
+    std::ifstream file(".env");
+    std::string line;
+
+    while (std::getline(file, line))
+    {
+        if (line.empty() || line[0] == '#')
+            continue;
+
+        size_t pos = line.find('=');
+
+        if (pos == std::string::npos)
+            continue;
+
+        std::string name = line.substr(0, pos);
+        std::string value = line.substr(pos + 1);
+
+        if (name == key)
+            return value;
+    }
+
+    return "";
+}
+
+// example of streaming response from the GROQ API using the fetch function with a stream callback
+void StreamCallbackFunction(const std::string &chunk)
+{
+    std::stringstream localStream(chunk);
+    std::string line;
+
+    while (std::getline(localStream, line))
+    {
+        if (line.rfind("data: ", 0) == 0)
+        {
+            std::string jsonPart = line.substr(6);
+
+            if (jsonPart == "[DONE]")
+            {
+                std::cout << std::endl;
+                return;
+            }
+
+            try
+            {
+                auto json = nlohmann::json::parse(jsonPart);
+
+                auto &delta = json["choices"][0]["delta"];
+
+                if (delta.contains("content"))
+                {
+                    std::string content = delta["content"];
+                    std::cout << content << std::flush;
+                }
+            }
+            catch (...){}
+        }
+    }
+}
+
+// the fetch function can also be used to handle streaming responses, by providing a stream callback function in the options
+Response FetchTestRoute3(Request req)
+{
+    const std::string API_KEY = dotenv("GROQ_API_KEY");
+
+    auto res = fetch("https://api.groq.com/openai/v1/chat/completions", {
+        .method = "POST",
+        .headers = {
+            {"Authorization", "Bearer " + API_KEY},
+            {"Content-Type", "application/json"}},
+        .body = nlohmann::json(
+            {
+                {"model", "llama-3.3-70b-versatile"},
+                {"messages", {
+                    {
+                        {"role", "user"}, 
+                        {"content", "Explain quantum computing in simple words"}
+                    }
+                }},
+                {"stream", true}
+            }
+        ).dump(),
+        .streamCallback = StreamCallbackFunction
+    });
 }
