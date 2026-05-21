@@ -124,7 +124,7 @@ void StreamCallbackFunction(const std::string &chunk)
 
             try
             {
-                auto json = nlohmann::json::parse(jsonPart);
+                auto json = json::parse(jsonPart);
 
                 auto &delta = json["choices"][0]["delta"];
 
@@ -149,7 +149,7 @@ Response FetchTestRoute3(Request req)
         .headers = {
             {"Authorization", "Bearer " + API_KEY},
             {"Content-Type", "application/json"}},
-        .body = nlohmann::json(
+        .body = json(
             {
                 {"model", "llama-3.3-70b-versatile"},
                 {"messages", {
@@ -163,4 +163,6 @@ Response FetchTestRoute3(Request req)
         ).dump(),
         .streamCallback = StreamCallbackFunction
     });
+
+    return Response("Stream started, check the console for output", 200, "OK");
 }
