@@ -10,7 +10,7 @@ LUMO_LIB = Lumo/liblumo.a
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	make -C Lumo
+	make -j$(nproc) -C Lumo
 	$(CXX) $(OBJ) -o $(NAME) $(LUMO_LIB) -lssl -lcrypto -lcurl
 
 clean:
