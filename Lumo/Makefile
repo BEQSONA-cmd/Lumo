@@ -10,6 +10,8 @@ OBJ = $(SRC:.cpp=.o)
 
 all: $(NAME)
 
+$(OBJ): | nlohmann
+
 $(NAME): $(OBJ)
 	ar rcs $(NAME) $(OBJ)
 
@@ -20,5 +22,8 @@ fclean: clean
 	rm -rf $(NAME)
 
 re: clean all
+
+nlohmann:
+	git clone https://github.com/BEQSONA-cmd/nlohmann-json-hpp-file.git nlohmann \
 
 .PHONY: all clean fclean re
