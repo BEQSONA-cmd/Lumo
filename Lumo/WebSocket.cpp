@@ -51,19 +51,36 @@ std::string WS::getPayload()
         return "";
     }
 
-    int payload_len = buffer[1] & 127;
     int mask_offset = 2;
+    uint64_t payload_len = buffer[1] & 127;
 
     if (payload_len == 126)
+    {
+        payload_len =
+            ((uint16_t)buffer[2] << 8) |
+            buffer[3];
+
         mask_offset = 4;
+    }
     else if (payload_len == 127)
+    {
+        payload_len = 0;
+
+        for (int i = 0; i < 8; i++)
+        {
+            payload_len =
+                (payload_len << 8) |
+                buffer[2 + i];
+        }
+
         mask_offset = 10;
+    }
 
     unsigned char *masking_key = buffer + mask_offset;
     unsigned char *payload = buffer + mask_offset + 4;
 
     std::string message;
-    for (int i = 0; i < payload_len; i++)
+    for (uint64_t i = 0; i < payload_len; i++)
     {
         message += payload[i] ^ masking_key[i % 4];
     }
