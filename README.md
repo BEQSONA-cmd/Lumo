@@ -184,5 +184,5 @@ sudo apt install build-essential
 ### libssl for OpenSSL
 
 ```Bash
-sudo apt install libssl-dev
+sudo apt install libssl-dev libcurl4-openssl-dev
 ```
