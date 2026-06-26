@@ -15,7 +15,7 @@ public:
     {
         ws_routes[path] = handler;
     }
-    void handleWebSocket(int client_socket, Request &req);
+    void handleWebSocket(int client_socket, SSL *ssl, bool secure, Request &req);
     void add(WebSocket client, const std::string &path);
     void broadcast(const std::string &message, const std::string &senderId, const std::string &route);
     void remove(const std::string &clientId);

@@ -1,9 +1,11 @@
 #include "WebSocket.hpp"
 #include "WebSocketManager.hpp"
 
-WS::WS(int fd, WebSocketManager *manager, const std::string &route)
+WS::WS(int fd, SSL *ssl, bool secure, WebSocketManager *manager, const std::string &route)
 {
     socket_fd = fd;
+    this->ssl = ssl;
+    this->secure = secure;
     connected = true;
     clientId = std::to_string(fd);
     this->manager = manager;
@@ -37,8 +39,13 @@ bool WS::onMessage()
 std::string WS::getPayload()
 {
     unsigned char buffer[4096];
-    int bytes = recv(socket_fd, buffer, sizeof(buffer), 0);
+    int bytes;
 
+    if (secure)
+        bytes = SSL_read(ssl, buffer, sizeof(buffer));
+    else
+        bytes = recv(socket_fd, buffer, sizeof(buffer), 0);
+    
     if (bytes <= 0)
     {
         connected = false;
@@ -119,7 +126,14 @@ void WS::sendPayload(const std::string &message)
 
     frame.insert(frame.end(), message.begin(), message.end());
 
-    if (send(socket_fd, frame.data(), frame.size(), 0) < 0)
+    int result;
+
+    if (secure)
+        result = SSL_write(ssl, frame.data(), frame.size());
+    else
+        result = send(socket_fd, frame.data(), frame.size(), 0);
+
+    if (result <= 0)
     {
         connected = false;
     }

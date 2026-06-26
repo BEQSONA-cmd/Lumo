@@ -16,12 +16,18 @@ private:
     WebSocketManager ws_manager;
     RequestManager req_manager;
 
+    bool https_enabled = false;
+    SSL_CTX *ssl_ctx = nullptr;
+
 public:
     int server_fd;
     Lumo(std::string host, int port);
 
     void start();
     void worker(int client_socket);
+
+    void useHttps(const std::string &certFile, const std::string &keyFile);
+    SSL* createSSL(int client_socket);
 
     void registerRoute(Response (*handler)(Request), std::string path, std::string method)
     {

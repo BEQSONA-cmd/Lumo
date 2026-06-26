@@ -52,16 +52,97 @@ Lumo::Lumo(std::string host, int port)
     }
 }
 
+void Lumo::useHttps(const std::string& certFile, const std::string& keyFile)
+{
+    SSL_library_init();
+    OpenSSL_add_all_algorithms();
+    SSL_load_error_strings();
+
+    const SSL_METHOD* method = TLS_server_method();
+
+    ssl_ctx = SSL_CTX_new(method);
+
+    if (!ssl_ctx)
+        throw std::runtime_error("Failed to create SSL_CTX");
+
+    if (SSL_CTX_use_certificate_file(
+            ssl_ctx,
+            certFile.c_str(),
+            SSL_FILETYPE_PEM) <= 0)
+    {
+        throw std::runtime_error("Failed loading certificate");
+    }
+
+    if (SSL_CTX_use_PrivateKey_file(
+            ssl_ctx,
+            keyFile.c_str(),
+            SSL_FILETYPE_PEM) <= 0)
+    {
+        throw std::runtime_error("Failed loading private key");
+    }
+
+    if (!SSL_CTX_check_private_key(ssl_ctx))
+    {
+        throw std::runtime_error("Certificate/private key mismatch");
+    }
+
+    https_enabled = true;
+}
+
+SSL *Lumo::createSSL(int client_socket)
+{
+    SSL* ssl = SSL_new(ssl_ctx);
+    SSL_set_fd(ssl, client_socket);
+
+    if (SSL_accept(ssl) <= 0)
+    {
+        SSL_free(ssl);
+        return nullptr;
+    }
+
+    return ssl;
+}
+
 void Lumo::worker(int new_socket)
 {
+    SSL* ssl = nullptr;
+
+    if (https_enabled)
+    {
+        ssl = createSSL(new_socket);
+
+        if (!ssl)
+        {
+            close(new_socket);
+            return;
+        }
+    }
+
     char buffer[4096] = {0};
-    read(new_socket, buffer, 4096);
+    int bytes;
+
+    if (ssl)
+        bytes = SSL_read(ssl, buffer, sizeof(buffer));
+    else
+        bytes = recv(new_socket, buffer, sizeof(buffer), 0);
+
+    if (bytes <= 0)
+    {
+        if (ssl)
+        {
+            SSL_shutdown(ssl);
+            SSL_free(ssl);
+        }
+
+        close(new_socket);
+        return;
+    }
 
     Request req = req_manager.parseRequest(buffer);
     auto it = req.headers.find("Upgrade");
     if (it != req.headers.end() && it->second == "websocket")
     {
-        ws_manager.handleWebSocket(new_socket, req);
+        ws_manager.handleWebSocket(new_socket, ssl, https_enabled, req);
         return;
     }
     Response res;
@@ -72,8 +153,16 @@ void Lumo::worker(int new_socket)
     }
 
     std::string httpResponse = req_manager.buildHttpResponse(res, req);
-    send(new_socket, httpResponse.c_str(), httpResponse.size(), 0);
+    if (ssl)
+        SSL_write(ssl, httpResponse.c_str(), httpResponse.size());
+    else
+        send(new_socket, httpResponse.c_str(), httpResponse.size(), 0);
 
+    if (ssl)
+    {
+        SSL_shutdown(ssl);
+        SSL_free(ssl);
+    }
     close(new_socket);
 }
 

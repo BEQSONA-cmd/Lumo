@@ -7,13 +7,15 @@ class WS
 {
 private:
     int socket_fd;
+    SSL *ssl = nullptr;
+    bool secure = false;
     std::atomic<bool> connected;
     std::string clientId;
     std::string route;
     WebSocketManager *manager;
 
 public:
-    WS(int fd, WebSocketManager *manager, const std::string &route);
+    WS(int fd, SSL *ssl, bool secure, WebSocketManager *manager, const std::string &route);
     bool onMessage();
     bool onConnect() { return connected; }
     bool onClose() { return !connected; }

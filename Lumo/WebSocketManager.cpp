@@ -13,7 +13,7 @@ std::string generateWebSocketAccept(const std::string &key)
     return std::string(base64);
 }
 
-void WebSocketManager::handleWebSocket(int client_socket, Request &req)
+void WebSocketManager::handleWebSocket(int client_socket, SSL *ssl, bool secure, Request &req)
 {
     std::string key = req.headers["Sec-WebSocket-Key"];
     std::string accept = generateWebSocketAccept(key);
@@ -24,7 +24,10 @@ void WebSocketManager::handleWebSocket(int client_socket, Request &req)
     response << "Connection: Upgrade\r\n";
     response << "Sec-WebSocket-Accept: " << accept << "\r\n\r\n";
 
-    send(client_socket, response.str().c_str(), response.str().size(), 0);
+    if (secure)
+        SSL_write(ssl, response.str().c_str(), response.str().size());
+    else
+        send(client_socket, response.str().c_str(), response.str().size(), 0);
 
     if (ws_routes.find(req.path) == ws_routes.end())
     {
@@ -32,7 +35,7 @@ void WebSocketManager::handleWebSocket(int client_socket, Request &req)
         return;
     }
 
-    auto ws = std::make_shared<WS>(client_socket, this, req.path);
+    auto ws = std::make_shared<WS>(client_socket, ssl, secure, this, req.path);
 
     add(ws, req.path);
 
